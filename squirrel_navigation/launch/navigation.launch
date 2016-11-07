@@ -5,8 +5,8 @@
   <arg name="autolocalization" default="false"/>
   <arg name="3d_mapping" default="true" />
   <arg name="use_scan_matcher_odom" default="false"/>
-  <arg name="use_last_pose" default="true"/>
-  <arg name="twist_mux" default="true"/>
+  <arg name="use_last_pose" default="false"/>
+  <arg name="twist_mux" default="false"/>
   
   <!--- Run mapserver -->
   <include file="$(find squirrel_navigation)/launch/map_server.launch">
