@@ -60,7 +60,7 @@ int main(int argc, char **argv)
       tf::Pose pos_tf;
 
   ros::Rate loop_rate(100);
-  while(ros::ok()){
+  while(ros::ok() && ros::master::check()){
     ros::spinOnce();
 
     if(g_msg.header.seq != 0){     
