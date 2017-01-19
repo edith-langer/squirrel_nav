@@ -21,6 +21,7 @@ recovery_behavior:
 controller_frequency: 15.0
 controller_patience: 5.0
 shutdown_costmaps: false
+recovery_behavior_enabled: false 
 
 # 
 # move_base.yaml ends here

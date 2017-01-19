@@ -3,7 +3,7 @@
     <param name="resolution" value="0.05" />
     <param name="frame_id" type="string" value="map" />
     <param name="max_sensor_range" value="4.0" />
-    <param name="pointcloud_min_z" value="0.0" />
+    <param name="pointcloud_min_z" value="-0.1" />
     <param name="pointcloud_max_z" value="0.76" />
     <param name="pointcloud_min_y" value="-1.0" />
     <param name="pointcloud_max_y" value="1.0" />
