@@ -15,10 +15,10 @@
     <param name="pointcloud_min_y" value="-1.0" />
     <param name="pointcloud_max_y" value="1.0" />
     <param name="pointcloud_min_x" value="0.0" />
-    <param name="pointcloud_max_x" value="2.5" />
+    <param name="pointcloud_max_x" value="2.0" />
     <param name="topic_binary" value="$(arg output_binary)" />
     <param name="topic_full" value="$(arg output_full)" />
-    <param name="filter_ground" value="true" />
+    <param name="filter_ground" value="false" />
     <param name="base_frame_id" value="$(arg base_frame)" />
     <param name="ground_filter/plane_distance" value="0.03" />
     <param name="voxel_filter/enabled" value="false" />
