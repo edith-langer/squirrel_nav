@@ -33,7 +33,7 @@
 
 namespace squirrel_2d_localizer {
 
-typedef Vector<2> EndPoint2d; 
+typedef Eigen::Vector2d EndPoint2d;
 
 }  // namespace squirrel_2d_localizer
 

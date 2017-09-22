@@ -29,11 +29,15 @@
 #ifndef SQUIRREL_2D_LOCALIZER_TWIST_CORRECTION_ROS_H_
 #define SQUIRREL_2D_LOCALIZER_TWIST_CORRECTION_ROS_H_
 
+#include "squirrel_2d_localizer/TwistCorrectionConfig.h"
 #include "squirrel_2d_localizer/extras/twist_correction.h"
 
-#include <ros/ros.h>
+#include <ros/node_handle.h>
+#include <ros/time.h>
 
 #include <nav_msgs/Odometry.h>
+
+#include <dynamic_reconfigure/server.h>
 
 #include <message_filters/cache.h>
 #include <message_filters/subscriber.h>
@@ -44,28 +48,28 @@ namespace squirrel_2d_localizer {
 
 class TwistCorrectionROS {
  public:
-  typedef std::unique_ptr<TwistCorrectionROS> Ptr;
-  typedef std::unique_ptr<TwistCorrectionROS const> ConstPtr;
-
- public:
   TwistCorrectionROS();
   virtual ~TwistCorrectionROS() {}
-
+  
+  // Comput the correction.
   Pose2d correction(const ros::Time& time) const;
 
  private:
-  inline double linearInterpolation(
-      double x0, double x1, double dt, double t) const {
-    return (1 - t / dt) * x0 + (t / dt) * x1;
-  }
+  void reconfigureCallback(TwistCorrectionConfig& config, uint32_t level);
+
+  // Interpolate between to real number.
+  double linearInterpolation(double x0, double x1, double dt, double t) const;
 
  private:
-  TwistCorrection::Ptr twist_correction_;
-
+  std::unique_ptr<TwistCorrection> twist_correction_;
+  
   ros::NodeHandle nh_;
 
   message_filters::Subscriber<nav_msgs::Odometry> odom_sub_;
   message_filters::Cache<nav_msgs::Odometry> cache_;
+
+  bool enabled_;
+  std::unique_ptr<dynamic_reconfigure::Server<TwistCorrectionConfig>> dsrv_;
 };
 
 }  // namespace squirrel_2d_localizer

@@ -40,64 +40,72 @@ namespace squirrel_2d_localizer {
 
 class Localizer {
  public:
-  typedef std::unique_ptr<Localizer> Ptr;
-  typedef std::unique_ptr<Localizer const> ConstPtr;
+  class Params {
+   public:
+    static Params defaultParams();
 
-  struct Params {
     int num_particles;
     double min_lin_update, min_ang_update;
     double init_stddev_x, init_stddev_y, init_stddev_a;
   };
 
  public:
-  Localizer() { setDefaultParams(); }
-  Localizer(const Params& loc_params) : loc_params_(loc_params) {}
+  Localizer() : params_(Params::defaultParams()) {}
+  Localizer(const Params& params) : params_(params) {}
   virtual ~Localizer() {}
 
+  // Initialize the localizer.
   void initialize(
-      GridMap::Ptr& map, LatentModelLikelihoodField::Ptr& likelihood_field,
-      LaserModel::Ptr& laser_model, MotionModel::Ptr& motion_model);
+      std::unique_ptr<GridMap>& map,
+      std::unique_ptr<LatentModelLikelihoodField>& likelihood_field,
+      std::unique_ptr<LaserModel>& laser_model,
+      std::unique_ptr<MotionModel>& motion_model);
 
+  // Update the localizer.
   void resetPose(const Pose2d& init_pose = Pose2d(0., 0., 0.));
+  void resetParticles(const std::vector<Particle>& particles);
+  bool updateNumParticles(int num_new_particles);
   bool updateFilter(
       const Transform2d& motion, const std::vector<float>& scan,
-      const Transform2d& extra_correction = Pose2d(0., 0., 0.));
+      const Transform2d& extra_correction = Pose2d(0., 0., 0.),
+      bool force_update = false);
 
+  // Get Particle filter's stuff.
   const std::vector<Particle>& particles() const { return particles_; }
   const Pose2d& pose() const { return pose_; }
-  const Matrix<3, 3>& covariance() const { return covariance_; }
+  const Eigen::Matrix3d& covariance() const { return covariance_; }
 
-  inline Params& params() { return loc_params_; }
+  // Get the update guard.
+  std::mutex& mutex() const { return mtx_; }
 
+  // Get the localizer's objects.
   inline GridMap* gridMap() { return map_.get(); }
   inline LaserModel* laserModel() { return laser_model_.get(); }
   inline MotionModel* motionModel() { return motion_model_.get(); }
 
+  // Parameters read/write utilities.
+  inline const Params& params() const { params_; }
+  inline void setParams(const Params& params) { params_ = params; }
+  inline Params& params() { return params_; }
+
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
- public:
-  mutable std::mutex init_mtx;
+ protected:
+  Params params_;
 
  private:
-  inline void setDefaultParams() {
-    loc_params_.num_particles  = 250;
-    loc_params_.min_lin_update = 1.0;
-    loc_params_.min_ang_update = 1.0;
-  }
-
- private:
-  GridMap::Ptr map_;
-  LatentModelLikelihoodField::Ptr likelihood_field_;
-  LaserModel::Ptr laser_model_;
-  MotionModel::Ptr motion_model_;
+  std::unique_ptr<GridMap> map_;
+  std::unique_ptr<LatentModelLikelihoodField> likelihood_field_;
+  std::unique_ptr<LaserModel> laser_model_;
+  std::unique_ptr<MotionModel> motion_model_;
 
   std::vector<Particle> particles_;
   Pose2d pose_;
-  Matrix<3, 3> covariance_;
-
-  Params loc_params_;
+  Eigen::Matrix3d covariance_;
 
   double cum_lin_motion_, cum_ang_motion_;
+
+  mutable std::mutex mtx_;
 };
 
 }  // namespace squirrel_2d_localizer

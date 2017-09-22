@@ -27,17 +27,18 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "squirrel_2d_localizer/resampling.h"
+#include "squirrel_2d_localizer/particle_types.h"
 
+#include <algorithm>
 #include <random>
 #include <thread>
 #include <vector>
 
 namespace squirrel_2d_localizer {
-
 namespace resampling {
 
 void importanceSampling(std::vector<Particle>* particles) {
-  std::unique_lock<std::mutex> lock(internal::resampling_mtx_);
+  std::unique_lock<std::mutex> lock(__internal::resampling_mtx_);
   std::mt19937 eng(std::rand());
   std::uniform_real_distribution<double> rand(0., 1.);
   const double tot_weights = particles::computeTotalWeight(*particles);
@@ -63,6 +64,31 @@ void importanceSampling(std::vector<Particle>* particles) {
   particles::setWeight(1. / nparticles, particles);
 }
 
-}  // namespace resampling
+void uniformUpsample(int nparticles_add, std::vector<Particle>* particles) {
+  std::unique_lock<std::mutex> lock(__internal::resampling_mtx_);
+  std::mt19937 rg(std::rand());
+  std::normal_distribution<double> randn(0, 1);
+  // Compute mean and covariance.
+  Pose2d mean;
+  Eigen::Matrix3d cov;
+  particles::computeMeanAndCovariance(*particles, &mean, &cov);
+  const Eigen::Vector3d& mean_vec = mean.toVector();
+  // Create new particles.
+  for (int i = 0; i < nparticles_add; ++i) {
+    const double x = randn(rg), y = randn(rg), a = randn(rg);
+    particles->emplace_back(
+        Pose2d(cov * Eigen::Vector3d(x, y, a) + mean_vec), 0.);
+  }
+}
 
+void uniformDownsample(
+    int nparticles_remove, std::vector<Particle>* particles) {
+  std::unique_lock<std::mutex> lock(__internal::resampling_mtx_);
+  // Extract uniformly which particles to keep.
+  const int new_particles_num = particles->size() - nparticles_remove;
+  std::shuffle(particles->begin(), particles->end(), std::mt19937(std::rand()));
+  particles->erase(particles->begin() + new_particles_num, particles->end());
+}
+
+}  // namespace resampling
 }  // namespace squirrel_2d_localizer

@@ -33,10 +33,13 @@
 namespace squirrel_2d_localizer {
 
 Pose2d::Pose2d(double x, double y, double a)
-    : translation_({x, y}), rotation_(a) {}
+    : translation_(x, y), rotation_(a) {}
 
-Pose2d::Pose2d(const Vector<2>& translation, double a)
+Pose2d::Pose2d(const Eigen::Vector2d& translation, double a)
     : translation_(translation), rotation_(a) {}
+
+Pose2d::Pose2d(const Eigen::Vector3d& pose_vec)
+    : translation_(pose_vec(0), pose_vec(1)), rotation_(pose_vec(2)) {}
 
 double Pose2d::operator[](size_t i) const {
   if (i == 0)
@@ -67,8 +70,7 @@ Pose2d& Pose2d::operator=(const Pose2d& rhs) {
 
 Pose2d Pose2d::operator*(const Pose2d& rhs) const {
   Pose2d output(
-      rotation_ * rhs.translation() + translation_,
-      rotation_.angle() + rhs[2]);
+      rotation_ * rhs.translation() + translation_, rotation_.angle() + rhs[2]);
   return output;
 }
 
@@ -81,6 +83,18 @@ Pose2d& Pose2d::operator*=(const Pose2d& rhs) {
 Pose2d Pose2d::inverse() const {
   Pose2d inv(rotation_.inverse() * (-translation_), -(*this)[2]);
   return inv;
+}
+
+Eigen::Vector3d Pose2d::toVector() const {
+  return Eigen::Vector3d(
+      translation_(0), translation_(1),
+      angles::normalize_angle(rotation_.angle()));
+}
+
+void Pose2d::fromVector(const Eigen::Vector3d& xya) {
+  translation_(0) = xya(0);
+  translation_(1) = xya(1);
+  rotation_       = Rotation2d(xya(2));
 }
 
 }  // namespace squirrel_2d_localizer

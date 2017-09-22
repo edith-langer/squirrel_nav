@@ -34,19 +34,23 @@
 #include <mutex>
 
 namespace squirrel_2d_localizer {
-
 namespace resampling {
 
+// Importance sampling via roulette sampling (courtesy of Rainer Kuemmerle).
 void importanceSampling(std::vector<Particle>* particles);
 
-namespace internal {
+// Uniform upsampling of particles.
+void uniformUpsample(int nparticles_add, std::vector<Particle>* particles);
+
+// Uniform dawnsampling of particles.
+void uniformDownsample(int nparticles_remove, std::vector<Particle>* particles);
+
+namespace __internal {
 
 static std::mutex resampling_mtx_;
 
-}  // namespace internal
-
+}  // namespace __internal
 }  // namespace resampling
-
 }  // namespace squirrel_2d_localizer
 
 #endif /* SQUIRREL_2D_LOCALIZER_RESAMPLING_H_ */

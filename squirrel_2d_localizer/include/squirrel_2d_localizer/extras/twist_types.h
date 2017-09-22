@@ -33,7 +33,7 @@
 
 namespace squirrel_2d_localizer {
 
-typedef Vector<3> Twist2d;
+typedef Eigen::Vector3d Twist2d;
 
 }  // namespace squirrel_2d_localizer
 

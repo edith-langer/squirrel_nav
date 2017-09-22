@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017, Ayush Dewan and Wolfram Burgard
+// Copyright (c) 2017, Ayush Dewan and Wolfram Burgard
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
@@ -25,6 +25,7 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 
 #include "ros/ros.h"
 #include <octomap/octomap.h>
@@ -120,6 +121,7 @@ class PublishOctomap
 
       for(octomap::OcTree::leaf_iterator it = octree->begin_leafs(),end = octree->end_leafs(); it!= end; ++it)
       {
+//        fprintf(stderr,"%f\n",it->getOccupancy());
         if(it->getOccupancy() < 0.9)
         {
           octomap::point3d pt = it.getCoordinate();
@@ -138,7 +140,7 @@ class PublishOctomap
         std::vector <int> pointIdxRadiusSearch;
         std::vector <float> pointRadiusSquaredDistance;
         if(kdtree.nearestKSearch(pt_pcl,1,pointIdxRadiusSearch,pointRadiusSquaredDistance) > 0)
-          if(sqrt(pointRadiusSquaredDistance[0]) < 0.1)
+          if(sqrt(pointRadiusSquaredDistance[0]) < 0.2)
             it->setColor(0,255,0);
           else
             it->setColor(0,0,255);

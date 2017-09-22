@@ -8,11 +8,12 @@ Repository for navigation related SQUIRREL packages.
 Install the package dependencies running
 ```bash
 rosdep install --from-path squirrel_nav -i -y
-sudo apt-get install ros-indigo-sbpl ros-indigo-csm
+sudo apt-get install ros-indigo-sbpl
 ```
 
-In order to properly generate the dynamic reconfiguration files, set
-execute permission to the files contained in `cfg` folder: run
+In order to properly generate the dynamic reconfiguration files,
+setting execute permission to the files contained in `cfg` folder
+might be needed: run
 ```bash
 chmod a+x cfg/*	
 ```
@@ -78,7 +79,7 @@ yaml file is in the current working directory.
 Set at first an estimated pose with the button *2D Pose Estimate* and
 move the robot around the map to localise the robot. To start the
 robot in the last pose, set `use_last_pose` parameter to `true` in
-[squirrel_localizer](https://github.com/squirrel-project/squirrel_nav/tree/indigo_dev/squirrel_2d_localizer)
+[squirrel_2d_localizer](https://github.com/squirrel-project/squirrel_nav/tree/indigo_dev/squirrel_2d_localizer)
 package.
 
 ### Performing a navigation task

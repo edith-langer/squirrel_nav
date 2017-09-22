@@ -4,26 +4,32 @@
   <version>1.0.0</version>
   <description>Monte Carlo Localizer for SQUIRREL project</description>
 
-  <maintainer email="boniardi@cs.uni-freiburg.de"/>>
+  <maintainer email="boniardi@cs.uni-freiburg.de"/>
 
-  <license>BSD 3c</license>
+  <license>BSD-3c</license>
+
   <author>Federico Boniardi</author>
-
+  
   <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>dynamic_reconfigure</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>message_filters</build_depend>
   <build_depend>nav_msgs</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>roslib</build_depend>
   <build_depend>sensor_msgs</build_depend>
+  <build_depend>squirrel_2d_localizer_msgs</build_depend>
   <build_depend>tf</build_depend>
 
+  <run_depend>dynamic_reconfigure</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>message_filters</run_depend>
   <run_depend>nav_msgs</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>roslib</run_depend>
   <run_depend>sensor_msgs</run_depend>
+  <run_depend>squirrel_2d_localizer_msgs</run_depend>
   <run_depend>tf</run_depend>
 
 </package>
